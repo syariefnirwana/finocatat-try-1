@@ -142,3 +142,45 @@
     color: var(--color-foreground);
   }
 }
+
+/* =========================================================
+   FinoCatat — token desain (terang, garis jelas, aksen biru)
+   ========================================================= */
+
+:root {
+  --fino-canvas: oklch(0.968 0.006 247);
+  --fino-canvas-2: oklch(0.985 0.004 247);
+  --fino-surface: oklch(1 0 0);
+  --fino-line: oklch(0.878 0.011 250);
+  --fino-line-strong: oklch(0.79 0.019 252);
+  --fino-ink: oklch(0.223 0.026 259);
+  --fino-ink-soft: oklch(0.53 0.026 254);
+  --fino-accent: oklch(0.507 0.183 261);
+  --fino-accent-strong: oklch(0.421 0.171 262);
+  --fino-accent-soft: oklch(0.955 0.021 259);
+  --fino-accent-ink: oklch(0.99 0 0);
+  --fino-up: oklch(0.532 0.111 163);
+  --fino-down: oklch(0.548 0.194 18);
+}
+
+@theme inline {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --color-canvas: var(--fino-canvas);
+  --color-canvas-2: var(--fino-canvas-2);
+  --color-surface: var(--fino-surface);
+  --color-line: var(--fino-line);
+  --color-line-strong: var(--fino-line-strong);
+  --color-ink: var(--fino-ink);
+  --color-ink-soft: var(--fino-ink-soft);
+  --color-accent: var(--fino-accent);
+  --color-accent-strong: var(--fino-accent-strong);
+  --color-accent-soft: var(--fino-accent-soft);
+  --color-accent-ink: var(--fino-accent-ink);
+  --color-up: var(--fino-up);
+  --color-down: var(--fino-down);
+  --shadow-accent: 0 1px 2px oklch(0.223 0.026 259 / 0.06), 0 22px 40px -30px oklch(0.507 0.183 261 / 0.55);
+}
+
+@utility bg-gradient-accent {
+  background-image: linear-gradient(135deg, var(--fino-accent) 0%, var(--fino-accent-strong) 100%);
+}
