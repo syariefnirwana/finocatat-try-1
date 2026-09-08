@@ -2414,7 +2414,7 @@
 
     <!-- PENDAFTARAN NOTIFIKASI PUSH (FCM) -->
     <script type="module">
-      import { db, messaging, getToken, onMessage } from './js/firebase-config.js';
+      import { db, messaging, getToken, onMessage } from '/dashboard/js/firebase-config.js';
       import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
@@ -2513,7 +2513,7 @@
     <script>
       let newWorker;
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js').then(reg => {
+        navigator.serviceWorker.register('/dashboard/service-worker.js').then(reg => {
           reg.addEventListener('updatefound', () => {
             newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
@@ -2594,18 +2594,18 @@
     </script>
 
     <!-- Script Utama Lu -->
-    <script type="module" src="./js/firebase-config.js"></script>
-    <script type="module" src="./js/state.js"></script>
-    <script type="module" src="./js/ui.js"></script>
-    <script type="module" src="./js/auth.js"></script>
-    <script type="module" src="./js/transaksi.js"></script>
-    <script type="module" src="./js/admin.js"></script>
-    <script type="module" src="./js/pdf-generator.js"></script>
-    <script type="module" src="./js/statistik.js"></script>
-    <script type="module" src="./js/pwa-setup.js"></script>
+    <script type="module" src="/dashboard/js/firebase-config.js"></script>
+    <script type="module" src="/dashboard/js/state.js"></script>
+    <script type="module" src="/dashboard/js/ui.js"></script>
+    <script type="module" src="/dashboard/js/auth.js"></script>
+    <script type="module" src="/dashboard/js/transaksi.js"></script>
+    <script type="module" src="/dashboard/js/admin.js"></script>
+    <script type="module" src="/dashboard/js/pdf-generator.js"></script>
+    <script type="module" src="/dashboard/js/statistik.js"></script>
+    <script type="module" src="/dashboard/js/pwa-setup.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-      <link rel="stylesheet" href="./css/fino.css?v=1" />
+      <link rel="stylesheet" href="/dashboard/css/fino.css?v=1" />
   </body>
 </html>
