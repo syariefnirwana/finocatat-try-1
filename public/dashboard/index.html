@@ -33,7 +33,7 @@
       };
     </script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -49,15 +49,13 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
-      // Kalo user secara sadar pernah milih light mode, kasih terang
-      if (localStorage.getItem("theme") === "light") {
-        document.documentElement.classList.remove("dark");
-      } else {
-        // Selain itu (termasuk user baru yang belum milih), paksa jadi dark mode
+      // Tema terang jadi bawaan (garis kartu lebih jelas). Mode gelap tetap
+      // tersedia lewat pengaturan dan tersimpan di perangkat user.
+      if (localStorage.getItem("theme") === "dark") {
         document.documentElement.classList.add("dark");
-        if (!localStorage.getItem("theme")) {
-            localStorage.setItem("theme", "dark");
-        }
+      } else {
+        document.documentElement.classList.remove("dark");
+        if (!localStorage.getItem("theme")) localStorage.setItem("theme", "light");
       }
     </script>
 
@@ -2565,5 +2563,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+      <link rel="stylesheet" href="./css/fino.css?v=1" />
   </body>
 </html>
