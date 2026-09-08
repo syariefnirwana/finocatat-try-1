@@ -85,5 +85,5 @@ export async function verifyFirebaseIdToken(
   if (!payload.sub || !payload.exp || payload.exp < now) {
     throw new Error("Sesi kedaluwarsa. Masuk ulang.");
   }
-  return { uid: payload.sub, email: payload.email };
+  return payload.email ? { uid: payload.sub, email: payload.email } : { uid: payload.sub };
 }

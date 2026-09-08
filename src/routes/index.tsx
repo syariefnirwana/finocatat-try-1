@@ -85,13 +85,13 @@ function Landing() {
           </nav>
           <div className="flex items-center gap-2">
             <a
-              href="/auth/"
+              href="/auth.html"
               className="rounded-xl border border-line px-3.5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-canvas-2 active:translate-y-px"
             >
               Masuk
             </a>
             <a
-              href="/auth/"
+              href="/auth.html"
               className="rounded-xl border border-accent-strong bg-accent px-3.5 py-2 text-sm font-semibold text-accent-ink shadow-accent transition-colors hover:bg-accent-strong active:translate-y-px"
             >
               Daftar gratis
@@ -117,13 +117,13 @@ function Landing() {
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <a
-                  href="/auth/"
+                  href="/auth.html"
                   className="rounded-xl border border-accent-strong bg-accent px-5 py-3 text-sm font-semibold text-accent-ink shadow-accent transition-colors hover:bg-accent-strong active:translate-y-px"
                 >
                   Mulai mencatat
                 </a>
                 <a
-                  href="/dashboard/"
+                  href="/dashboard.html"
                   className="rounded-xl border border-line bg-surface px-5 py-3 text-sm font-semibold transition-colors hover:bg-canvas-2 active:translate-y-px"
                 >
                   Lihat dasbor
@@ -277,7 +277,7 @@ function Landing() {
                 Butuh kurang dari satu menit untuk membuat akun dan mencatat transaksi pertamamu.
               </p>
               <a
-                href="/auth/"
+                href="/auth.html"
                 className="mt-7 inline-block rounded-xl border border-line bg-surface px-6 py-3 text-sm font-semibold text-ink transition-transform hover:bg-canvas-2 active:translate-y-px"
               >
                 Buat akun gratis
@@ -291,10 +291,10 @@ function Landing() {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 text-xs text-ink-soft sm:flex-row">
           <p>© {new Date().getFullYear()} FinoCatat. Catat keuangan dengan tenang.</p>
           <div className="flex gap-5">
-            <a className="hover:text-accent" href="/auth/">
+            <a className="hover:text-accent" href="/auth.html">
               Masuk
             </a>
-            <a className="hover:text-accent" href="/dashboard/">
+            <a className="hover:text-accent" href="/dashboard.html">
               Dasbor
             </a>
           </div>
