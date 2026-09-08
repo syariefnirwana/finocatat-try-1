@@ -353,3 +353,45 @@ table thead tr {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- perbaikan tata letak ---------- */
+
+/* carousel banner: sembunyikan kalau belum ada isi */
+#carouselContainer:has(#carouselTrack:empty) {
+  display: none !important;
+}
+
+#carouselContainer {
+  height: auto !important;
+  min-height: 8.5rem;
+  margin-bottom: 0 !important;
+}
+
+/* urutan menu transaksi: aksi harian paling depan */
+#tab-dashboard .grid > * { order: 6; }
+#tab-dashboard .grid > *:has(button[onclick*="Tambah Pemasukan"]) { order: 1; }
+#tab-dashboard .grid > *:has(button[onclick*="Catat Pengeluaran"]) { order: 2; }
+#tab-dashboard .grid > *:has(#btnCetakPdf) { order: 3; }
+#tab-dashboard .grid > *:has(button[onclick*="Edit Pemasukan"]) { order: 4; }
+#tab-dashboard .grid > *:has(button[onclick*="Edit Pengeluaran"]) { order: 5; }
+#tab-dashboard .grid > *:has(button[onclick*="Transfer Saldo"]) { order: 7; }
+#tab-dashboard .grid > *:has(#btnScanStruk) { order: 8; }
+#tab-dashboard .grid > *:has(button[onclick*="Hapus Pemasukan"]) { order: 9; }
+#tab-dashboard .grid > *:has(button[onclick*="Hapus Pengeluaran"]) { order: 10; }
+
+/* kartu ringkasan atas tetap urut wajar */
+#tab-dashboard .grid > *:has(#displaySaldo) { order: 0; }
+#tab-dashboard .grid > *:has(#displayPemasukan) { order: 1; }
+#tab-dashboard .grid > *:has(#displayPengeluaran) { order: 2; }
+
+/* dua aksi utama diberi warna lembut sesuai artinya */
+#tab-dashboard button[onclick*="Tambah Pemasukan"] {
+  border-color: color-mix(in srgb, var(--fino-up) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--fino-up) 8%, var(--fino-surface)) !important;
+}
+
+/* daftar dompet: jarak antar kartu kecil terlihat */
+#dompetSliderContainer > * {
+  border: 1px solid var(--fino-line) !important;
+  border-radius: 14px !important;
+}
