@@ -16,7 +16,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 window.addEventListener('load', () => {
     console.log('PWA Setup dimuat.');
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js')
+        navigator.serviceWorker.register('/service-worker.js')
             .then(reg => console.log('Service Worker berhasil didaftarkan:', reg))
             .catch(err => console.error('Service Worker gagal:', err));
     }
@@ -41,7 +41,7 @@ if (profileInstallBtn) {
 // Mendaftarkan Service Worker ke dalam sistem
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
+        navigator.serviceWorker.register('/service-worker.js')
             .then(reg => console.log('Service Worker berhasil diaktifkan.', reg))
             .catch(err => console.error('Kesalahan: Service Worker gagal didaftarkan.', err));
     });
@@ -67,7 +67,7 @@ window.forceDownloadCache = async function() {
     const urlsToCache = [
         "./",
         "/dashboard.html",
-        "./manifest.json",
+        "/dashboard/manifest.json",
         "./js/firebase-config.js",
         "./js/state.js",
         "./js/ui.js",

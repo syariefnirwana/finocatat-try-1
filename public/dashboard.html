@@ -8,7 +8,7 @@
     />
     <title>FinoCatat - Pencatatan Keuangan</title>
 
-    <link rel="manifest" href="manifest.json?v=2" />
+    <link rel="manifest" href="/dashboard/manifest.json?v=3" />
     <meta name="theme-color" content="#3b82f6" />
     <link
       rel="apple-touch-icon"
@@ -2513,7 +2513,7 @@
     <script>
       let newWorker;
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/dashboard/service-worker.js').then(reg => {
+        navigator.serviceWorker.register('/service-worker.js').then(reg => {
           reg.addEventListener('updatefound', () => {
             newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
