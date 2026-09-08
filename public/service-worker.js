@@ -1,18 +1,18 @@
-const CACHE_NAME = "finocatat-beta-v2";
+const CACHE_NAME = "finocatat-v3";
 
 // List semua file vital lu di sini biar di-download di awal
 const URLS_TO_CACHE = [
-  "./",
   "/dashboard.html",
-  "./manifest.json",
-  "./js/firebase-config.js",
-  "./js/state.js",
-  "./js/ui.js",
-  "./js/auth.js",
-  "./js/transaksi.js",
-  "./js/admin.js",
-  "./js/pdf-generator.js",
-  "./js/pwa-setup.js"
+  "/dashboard/manifest.json",
+  "/dashboard/css/fino.css",
+  "/dashboard/js/firebase-config.js",
+  "/dashboard/js/state.js",
+  "/dashboard/js/ui.js",
+  "/dashboard/js/auth.js",
+  "/dashboard/js/transaksi.js",
+  "/dashboard/js/admin.js",
+  "/dashboard/js/pdf-generator.js",
+  "/dashboard/js/pwa-setup.js"
 ];
 // 1. Hapus self.skipWaiting() biar update-nya kaga maksa jalan di background
 self.addEventListener("install", (e) => {
