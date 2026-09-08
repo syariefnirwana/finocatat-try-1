@@ -1,0 +1,154 @@
+/* FinoCatat — tampilan halaman masuk & daftar (2026)
+   Bersih, garis kartu terlihat, satu warna aksen biru. */
+
+:root {
+  --fino-accent: #0b5cd5;
+  --fino-accent-strong: #0847a5;
+  --fino-line: #d3dbe6;
+  --fino-ink: #111a27;
+  --fino-ink-soft: #5b6879;
+  --fino-surface: #ffffff;
+  --fino-surface-2: #f8fafc;
+}
+
+body {
+  font-family: "Outfit", "Inter", system-ui, sans-serif !important;
+  background: radial-gradient(circle at 12% 12%, #e7effb 0%, #f2f5f9 45%, #eef2f7 100%) !important;
+  animation: none !important;
+  color: var(--fino-ink) !important;
+  padding: 1.5rem !important;
+}
+
+[class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+}
+
+/* kartu formulir */
+#glassCard {
+  background: var(--fino-surface) !important;
+  border: 1px solid var(--fino-line) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 1px 2px rgba(17, 26, 39, 0.05), 0 26px 48px -34px rgba(11, 92, 213, 0.45) !important;
+  padding: 2rem 1.75rem !important;
+}
+
+#cardContainer {
+  max-width: 27rem !important;
+}
+
+/* lencana merek di atas judul */
+#glassCard::before {
+  content: "FinoCatat";
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--fino-line);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fino-accent);
+  background: #eaf1fd;
+}
+
+#titleText {
+  font-size: 1.6rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em;
+  color: var(--fino-ink) !important;
+}
+
+#subtitleText,
+#toggleDesc {
+  color: var(--fino-ink-soft) !important;
+}
+
+label {
+  color: var(--fino-ink) !important;
+  font-weight: 500;
+}
+
+/* kolom isian */
+#usernameInput, #emailInput, #passwordInput {
+  background: var(--fino-surface-2) !important;
+  border: 1px solid var(--fino-line) !important;
+  border-radius: 12px !important;
+  color: var(--fino-ink) !important;
+  padding-top: 0.8rem !important;
+  padding-bottom: 0.8rem !important;
+}
+
+#usernameInput:focus, #emailInput:focus, #passwordInput:focus {
+  background: #fff !important;
+  border-color: var(--fino-accent) !important;
+  box-shadow: 0 0 0 3px rgba(11, 92, 213, 0.15) !important;
+}
+
+#usernameInput::placeholder, #emailInput::placeholder, #passwordInput::placeholder {
+  color: #98a4b3 !important;
+}
+
+/* tombol utama */
+#submitBtn {
+  background: var(--fino-accent) !important;
+  border: 1px solid var(--fino-accent-strong) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 20px -12px rgba(11, 92, 213, 0.7) !important;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+#submitBtn:hover:not(:disabled) {
+  background: var(--fino-accent-strong) !important;
+  transform: none !important;
+}
+
+#submitBtn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99) !important;
+}
+
+#submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#suggestPasswordBtn, #forgotPasswordBtn, #toggleModeBtn {
+  color: var(--fino-accent) !important;
+}
+
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--fino-accent) !important;
+  outline-offset: 2px;
+}
+
+/* daftar riwayat email */
+#historyDropdown {
+  background: #fff !important;
+  border: 1px solid var(--fino-line) !important;
+  border-radius: 12px !important;
+}
+
+/* syarat kata sandi */
+#passwordRequirements {
+  background: var(--fino-surface-2);
+  border: 1px solid var(--fino-line);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+}
+
+/* pemberitahuan mengambang */
+#appleToast {
+  background: #fff !important;
+  border: 1px solid var(--fino-line) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 18px 40px -26px rgba(17, 26, 39, 0.55) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
