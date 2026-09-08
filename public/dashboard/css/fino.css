@@ -1,0 +1,355 @@
+/* ==========================================================
+   FinoCatat — lapisan desain 2026
+   Gaya: perbankan digital modern (rasa BRImo). Tenang, garis
+   batas jelas di semua kartu, jarak lega, satu warna aksen.
+   File ini dimuat paling akhir supaya menimpa utilitas lama.
+   ========================================================== */
+
+:root {
+  --fino-accent: #0b5cd5;
+  --fino-accent-strong: #0847a5;
+  --fino-accent-soft: #eaf1fd;
+  --fino-bg: #f2f5f9;
+  --fino-surface: #ffffff;
+  --fino-surface-2: #f8fafc;
+  --fino-line: #d3dbe6;
+  --fino-line-strong: #b9c4d4;
+  --fino-ink: #111a27;
+  --fino-ink-soft: #5b6879;
+  --fino-up: #067a52;
+  --fino-down: #c62b3c;
+  --fino-shadow: 0 1px 2px rgba(17, 26, 39, 0.05), 0 18px 32px -28px rgba(11, 92, 213, 0.35);
+  --accent-color: var(--fino-accent);
+  --accent-hover-color: var(--fino-accent-strong);
+}
+
+.dark {
+  --fino-bg: #0b1017;
+  --fino-surface: #141b25;
+  --fino-surface-2: #10161f;
+  --fino-line: #2a3543;
+  --fino-line-strong: #3a4757;
+  --fino-ink: #e9eef5;
+  --fino-ink-soft: #94a2b4;
+  --fino-accent-soft: #16233a;
+  --fino-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 32px -28px rgba(0, 0, 0, 0.8);
+}
+
+/* ---------- dasar ---------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Outfit", "Inter", system-ui, sans-serif !important;
+  background: var(--fino-bg) !important;
+  color: var(--fino-ink) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p, .leading-relaxed {
+  text-wrap: pretty;
+}
+
+/* angka rapi & sejajar */
+#displaySaldo, #displayPemasukan, #displayPengeluaran,
+table td, table th, .fino-num,
+[id^="display"], [id*="Saldo"], [id*="Total"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* hilangkan orb blur & kabut kaca — bikin garis kartu tenggelam */
+.animate-orb-1, .animate-orb-2 {
+  display: none !important;
+}
+
+[class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+}
+
+/* ---------- permukaan & garis batas ---------- */
+
+.bg-white,
+.bg-white\/40, .bg-white\/60, .bg-white\/80,
+.dark\:bg-slate-900\/40, .dark\:bg-slate-800\/50, .dark\:bg-slate-800\/80 {
+  background-color: var(--fino-surface) !important;
+}
+
+.bg-slate-50, .bg-slate-100, .dark\:bg-slate-900, .dark\:bg-slate-800 {
+  background-color: var(--fino-surface-2) !important;
+}
+
+[class*="border-slate-"],
+[class*="border-white"],
+[class*="divide-slate-"] {
+  border-color: var(--fino-line) !important;
+}
+
+/* setiap kartu wajib punya garis 1px penuh yang terlihat */
+main section > div,
+main section > div > div,
+.rounded-3xl.border, .rounded-2xl.border, .rounded-xl.border {
+  border-color: var(--fino-line) !important;
+}
+
+main section > div {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.rounded-3xl { border-radius: 20px !important; }
+.rounded-2xl { border-radius: 15px !important; }
+.rounded-xl { border-radius: 12px !important; }
+
+[class*="shadow"] {
+  box-shadow: var(--fino-shadow) !important;
+}
+
+.shadow-none, .shadow-inner {
+  box-shadow: none !important;
+}
+
+/* jarak antar kartu supaya batas kelihatan semua */
+main {
+  padding-bottom: 6rem !important;
+}
+
+main section.tab-content {
+  gap: 1.25rem !important;
+}
+
+main .grid {
+  gap: 1.15rem !important;
+}
+
+.text-slate-500, .text-slate-400, .dark\:text-slate-400, .dark\:text-slate-300 {
+  color: var(--fino-ink-soft) !important;
+}
+
+.text-slate-800, .text-slate-700, .dark\:text-white {
+  color: var(--fino-ink) !important;
+}
+
+.text-emerald-600, .text-emerald-500, .dark\:text-emerald-400 { color: var(--fino-up) !important; }
+.text-red-500, .text-red-600, .dark\:text-red-400 { color: var(--fino-down) !important; }
+.text-accent { color: var(--fino-accent) !important; }
+
+/* ---------- sisi navigasi ---------- */
+
+aside {
+  background: var(--fino-surface) !important;
+  border-right: 1px solid var(--fino-line) !important;
+}
+
+.nav-item {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.nav-item:hover {
+  background: var(--fino-surface-2) !important;
+  border-color: var(--fino-line) !important;
+}
+
+.nav-item.active,
+.nav-item[data-active="true"] {
+  background: var(--fino-accent-soft) !important;
+  border-color: color-mix(in srgb, var(--fino-accent) 35%, transparent) !important;
+  color: var(--fino-accent) !important;
+}
+
+/* tab bawah untuk layar HP */
+nav.fixed.bottom-0, .bottom-nav, footer.fixed {
+  background: var(--fino-surface) !important;
+  border-top: 1px solid var(--fino-line) !important;
+}
+
+/* ---------- kartu saldo utama (hero) ---------- */
+
+#tab-dashboard > .grid:first-of-type > div:first-child,
+#tab-dashboard .grid > div:has(#displaySaldo) {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--fino-accent) 0%, var(--fino-accent-strong) 100%) !important;
+  border-color: var(--fino-accent-strong) !important;
+  padding: 1.75rem !important;
+}
+
+#tab-dashboard .grid > div:has(#displaySaldo) span,
+#tab-dashboard .grid > div:has(#displaySaldo) h3 {
+  color: #fff !important;
+}
+
+#displaySaldo {
+  font-size: clamp(1.9rem, 6vw, 2.6rem) !important;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+#tab-dashboard .grid > div:has(#displaySaldo) > div:last-child {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #fff !important;
+}
+
+/* ---------- aksi cepat: urutan yang paling sering dipakai dulu ---------- */
+
+#tab-dashboard button[onclick*="Tambahkan Pemasukan"] { order: 1; }
+#tab-dashboard button[onclick*="Catat Pengeluaran"] { order: 2; }
+#tab-dashboard #btnCetakPdf { order: 3; }
+#tab-dashboard button[onclick*="Edit Pemasukan"] { order: 4; }
+#tab-dashboard button[onclick*="Edit Pengeluaran"] { order: 5; }
+#tab-dashboard button[onclick*="Transfer Saldo"] { order: 6; }
+#tab-dashboard #btnScanStruk { order: 7; }
+#tab-dashboard button[onclick*="Hapus Pemasukan"] { order: 8; }
+#tab-dashboard button[onclick*="Hapus Pengeluaran"] { order: 9; }
+
+/* dua aksi utama dibuat lebih menonjol */
+#tab-dashboard button[onclick*="Tambahkan Pemasukan"] {
+  border-color: color-mix(in srgb, var(--fino-up) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--fino-up) 8%, var(--fino-surface)) !important;
+}
+
+#tab-dashboard button[onclick*="Catat Pengeluaran"] {
+  border-color: color-mix(in srgb, var(--fino-down) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--fino-down) 8%, var(--fino-surface)) !important;
+}
+
+/* ---------- tombol: hover, tekan, fokus ---------- */
+
+button, a, [role="button"], select, input, textarea {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--fino-line-strong) !important;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--fino-accent) !important;
+  outline-offset: 2px;
+}
+
+input, select, textarea {
+  border: 1px solid var(--fino-line) !important;
+  background: var(--fino-surface-2) !important;
+  color: var(--fino-ink) !important;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--fino-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fino-accent) 15%, transparent) !important;
+}
+
+.bg-accent, .bg-blue-600, .bg-purple-600, .bg-indigo-600 {
+  background-color: var(--fino-accent) !important;
+  border-color: var(--fino-accent-strong) !important;
+  color: #fff !important;
+}
+
+.hover\:bg-accentHover:hover, .hover\:bg-blue-700:hover,
+.hover\:bg-purple-700:hover, .hover\:bg-indigo-700:hover {
+  background-color: var(--fino-accent-strong) !important;
+}
+
+/* ---------- riwayat transaksi: baris jelas, mudah dibaca ---------- */
+
+#txHistoryTableBody tr,
+#adminUserTableBody tr,
+#adminReportTableBody tr {
+  border-bottom: 1px solid var(--fino-line);
+}
+
+#txHistoryTableBody tr:last-child,
+#adminUserTableBody tr:last-child,
+#adminReportTableBody tr:last-child {
+  border-bottom: 0;
+}
+
+#txHistoryTableBody tr:hover {
+  background: var(--fino-surface-2);
+}
+
+#txHistoryTableBody td {
+  padding-top: 0.85rem !important;
+  padding-bottom: 0.85rem !important;
+  font-size: 0.78rem;
+}
+
+table thead tr {
+  border-bottom: 1px solid var(--fino-line-strong) !important;
+  text-transform: none;
+}
+
+/* ---------- kondisi memuat & kosong ---------- */
+
+.fino-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--fino-surface-2);
+  border-radius: 10px;
+  height: 0.95rem;
+}
+
+.fino-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fino-line) 60%, transparent), transparent);
+  animation: finoShimmer 1.4s infinite;
+}
+
+@keyframes finoShimmer {
+  100% { transform: translateX(100%); }
+}
+
+.fino-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--fino-ink-soft);
+  font-size: 0.8rem;
+}
+
+/* ---------- panel admin: bagian bertajuk, jarak lega ---------- */
+
+#tab-admin > div {
+  padding: 1.25rem !important;
+}
+
+#tab-admin h2, #tab-admin h3 {
+  letter-spacing: -0.01em;
+}
+
+/* ---------- modal ---------- */
+
+.modal-pop {
+  border: 1px solid var(--fino-line) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
