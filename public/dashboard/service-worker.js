@@ -3,7 +3,7 @@ const CACHE_NAME = "finocatat-beta-v2";
 // List semua file vital lu di sini biar di-download di awal
 const URLS_TO_CACHE = [
   "./",
-  "./index.html",
+  "/dashboard.html",
   "./manifest.json",
   "./js/firebase-config.js",
   "./js/state.js",

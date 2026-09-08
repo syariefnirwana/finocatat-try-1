@@ -13,7 +13,7 @@ window.executeLogout = async function() {
     await signOut(auth); 
     localStorage.removeItem('activeTab');
     window.showSuccessModal("Keluar Akun", "Anda telah berhasil logout dari sesi aplikasi.", () => { 
-        window.location.href = "../index.html"; 
+        window.location.href = "/auth.html"; 
     }); 
 }
 
@@ -143,7 +143,7 @@ window.executeDangerAction = async function(mode) {
             localStorage.removeItem('activeTab'); 
             
             window.closeModal('dangerZoneModal'); 
-            window.showSuccessModal("Akun Dihapus", "Seluruh rekam data dan otentikasi dihapus permanen.", () => { window.location.href = "../index.html"; }); 
+            window.showSuccessModal("Akun Dihapus", "Seluruh rekam data dan otentikasi dihapus permanen.", () => { window.location.href = "/auth.html"; }); 
         } catch (e) { 
             window.isExiting = false; 
             window.showWarnModal("Akses Ditolak", "Login ulang diperlukan untuk aksi berbahaya ini."); 
@@ -154,7 +154,7 @@ window.executeDangerAction = async function(mode) {
 // 6. Init Core Auth State Listener
 onAuthStateChanged(auth, (user) => {
     if (!user) { 
-        if(!window.isExiting) { window.location.href = "../index.html"; }
+        if(!window.isExiting) { window.location.href = "/auth.html"; }
     } else {
         window.currentUserUid = user.uid; 
         document.getElementById('profEmail').textContent = user.email; 

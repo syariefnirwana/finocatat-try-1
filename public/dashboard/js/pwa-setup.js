@@ -66,7 +66,7 @@ window.forceDownloadCache = async function() {
         // List file lokal yang WAJIB didownload biar web bisa kebuka (Tanpa CDN Eksternal)
     const urlsToCache = [
         "./",
-        "./index.html",
+        "/dashboard.html",
         "./manifest.json",
         "./js/firebase-config.js",
         "./js/state.js",
