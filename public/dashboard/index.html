@@ -2412,58 +2412,101 @@
       </div>
     </div>
 
-    <!-- MESIN PENARIK TOKEN NOTIFIKASI -->
+    <!-- PENDAFTARAN NOTIFIKASI PUSH (FCM) -->
     <script type="module">
-      import { db, messaging, getToken } from './js/firebase-config.js';
+      import { db, messaging, getToken, onMessage } from './js/firebase-config.js';
       import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
       import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-      document.getElementById('btnEnableNotif').addEventListener('click', async () => {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        if (!user) { alert("Login dulu bro!"); return; }
+      const VAPID_KEY = 'BFP4sSmBoZvMR4eQa7-gSF1oYTUumqZ_XT0Q_pAQ_RKfBLedsRRVeuZqunXQmdtV_Lz22SQA1Ws8f4ouHVUZNTA';
+      const btn = document.getElementById('btnEnableNotif');
 
-        const btn = document.getElementById('btnEnableNotif');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+      function pesan(judul, isi, sukses) {
+        if (sukses && window.showSuccessModal) return window.showSuccessModal(judul, isi);
+        if (!sukses && window.showWarnModal) return window.showWarnModal(judul, isi);
+        console.log(judul + ': ' + isi);
+      }
+
+      function setBtn(html, aktif) {
+        if (!btn) return;
+        btn.innerHTML = html;
+        btn.disabled = false;
+        if (aktif) btn.classList.add('bg-emerald-600');
+      }
+
+      // Notifikasi yang masuk saat aplikasi sedang dibuka.
+      onMessage(messaging, (payload) => {
+        const n = payload.notification || {};
+        pesan(n.title || 'Pemberitahuan', n.body || '', true);
+      });
+
+      async function daftarkanPerangkat() {
+        const user = getAuth().currentUser;
+        if (!user) {
+          pesan('Belum masuk', 'Masuk ke akunmu dulu sebelum mengaktifkan pengingat.', false);
+          return;
+        }
+        if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+          pesan('Tidak didukung', 'Peramban ini belum mendukung notifikasi. Coba Chrome di Android atau desktop.', false);
+          return;
+        }
+        // Izin notifikasi tidak bisa muncul di dalam jendela pratinjau.
+        if (window.top !== window.self) {
+          pesan('Buka di tab sendiri', 'Buka FinoCatat di tab peramban terpisah, lalu tekan tombol ini lagi supaya izin notifikasi bisa muncul.', false);
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyiapkan...';
 
         try {
-          alert("[1/4] Meminta izin notifikasi OS Android...");
-          const permission = await Notification.requestPermission();
-          
-          if (permission === 'granted') {
-            alert("[2/4] Izin Granted! Menunggu Service Worker PWA siap...");
-            const swRegistration = await navigator.serviceWorker.ready;
-            
-            alert("[3/4] SW Ready! Menarik Token FCM dari Satelit Google...");
-            const currentToken = await getToken(messaging, { 
-              vapidKey: 'BFP4sSmBoZvMR4eQa7-gSF1oYTUumqZ_XT0Q_pAQ_RKfBLedsRRVeuZqunXQmdtV_Lz22SQA1Ws8f4ouHVUZNTA',
-              serviceWorkerRegistration: swRegistration
-            });
-            
-            alert("[4/4] Selesai narik token: " + (currentToken ? "Sukses dapet Token!" : "Token Kosong"));
+          const izin = Notification.permission === 'granted'
+            ? 'granted'
+            : await Notification.requestPermission();
 
-            if (currentToken) {
-              await setDoc(doc(db, "users", user.uid, "fcm", "token"), {
-                token: currentToken, updatedAt: new Date()
-              });
-              alert("Sip! HP lu udah sah terdaftar buat nerima notif.");
-              btn.innerHTML = '<i class="fa-solid fa-check"></i> Pengingat Aktif';
-              btn.classList.replace('bg-purple-600', 'bg-emerald-600');
-            } else {
-              alert("Gagal narik token dari Google.");
-              btn.innerHTML = '<i class="fa-solid fa-bell"></i> Aktifkan Pengingat';
-            }
-          } else {
-            alert("Lu nolak izin notif di Setelan HP Android lu.");
-            btn.innerHTML = '<i class="fa-solid fa-bell"></i> Aktifkan Pengingat';
+          if (izin !== 'granted') {
+            pesan('Izin ditolak', 'Notifikasi diblokir. Buka setelan situs di peramban, izinkan Notifikasi, lalu coba lagi.', false);
+            setBtn('<i class="fa-solid fa-bell"></i> Aktifkan Pengingat');
+            return;
           }
+
+          // Penerima notifikasi wajib didaftarkan dari akar situs.
+          const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' });
+          await navigator.serviceWorker.ready;
+
+          const token = await getToken(messaging, {
+            vapidKey: VAPID_KEY,
+            serviceWorkerRegistration: swReg,
+          });
+
+          if (!token) {
+            pesan('Gagal mendaftar', 'Perangkat belum bisa didaftarkan. Periksa koneksi lalu coba lagi.', false);
+            setBtn('<i class="fa-solid fa-bell"></i> Aktifkan Pengingat');
+            return;
+          }
+
+          await setDoc(doc(db, "users", user.uid, "fcm", "token"), {
+            token: token,
+            platform: navigator.userAgent,
+            updatedAt: new Date(),
+          });
+
+          localStorage.setItem('fino_notif_aktif', '1');
+          pesan('Pengingat aktif', 'Perangkat ini terdaftar. Pengingat harian akan dikirim tiap jam 20:00.', true);
+          setBtn('<i class="fa-solid fa-check"></i> Pengingat Aktif', true);
         } catch (err) {
-          // FIX: Tangkap error secara brutal dan ubah jadi string biar bisa dibaca di HP
-          let errDetail = err.message ? err.message : JSON.stringify(err);
-          alert("CRASH BRO! Meledak di sini. Detail: " + errDetail);
-          btn.innerHTML = '<i class="fa-solid fa-bell"></i> Aktifkan Pengingat';
+          console.error('Pendaftaran notifikasi gagal:', err);
+          pesan('Gagal mendaftar', (err && err.message) ? err.message : 'Terjadi kesalahan saat mendaftarkan perangkat.', false);
+          setBtn('<i class="fa-solid fa-bell"></i> Aktifkan Pengingat');
         }
-      });
+      }
+
+      if (btn) {
+        btn.addEventListener('click', daftarkanPerangkat);
+        if (localStorage.getItem('fino_notif_aktif') === '1' && Notification.permission === 'granted') {
+          setBtn('<i class="fa-solid fa-check"></i> Pengingat Aktif', true);
+        }
+      }
     </script>
 
     <!-- LOGIKA MESIN DETEKSI UPDATE -->
