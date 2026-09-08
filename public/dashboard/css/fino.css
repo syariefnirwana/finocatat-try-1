@@ -395,3 +395,24 @@ table thead tr {
   border: 1px solid var(--fino-line) !important;
   border-radius: 14px !important;
 }
+
+/* pembungkus yang cuma menampung kartu lain tidak perlu garis sendiri */
+main section > div.grid,
+main section > div:has(> .grid) {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* baris ringkasan: tiga kartu mengisi lebar penuh */
+@media (min-width: 1024px) {
+  #tab-dashboard .grid:has(#displaySaldo) {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* kotak muat data dompet */
+#dompetSliderContainer .animate-pulse {
+  background: var(--fino-surface-2) !important;
+}
