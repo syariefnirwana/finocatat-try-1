@@ -730,16 +730,14 @@ window.saveMaintenanceMsg = async function () {
         
         await updateDoc(doc(db, "app_config", "settings"), { maintenance_msg: msg });
         
-        // Tembak Vercel API buat ngirim Push Notif (Sesuaiin URL sama Vercel lu ntar)
-        fetch('/api/broadcast', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                title: "⚠️ FinoCatat Sedang Maintenance",
-                body: msg,
-                secretPin: "SYARIEF_GANTENG_123" // Ganti sesuai password rahasia lu ntar
-            })
-        }).catch(err => console.log("API notif belom jalan: ", err));
+        // Kabari semua user lewat notifikasi push
+        if (window.finoSendPush) {
+            window.finoSendPush({
+                mode: 'manual',
+                title: "FinoCatat sedang dalam perbaikan",
+                body: msg
+            }).catch(err => console.error("Notifikasi maintenance gagal:", err));
+        }
 
         if(window.showSuccessModal) window.showSuccessModal("Berhasil", "Pesan tersimpan & Push Notifikasi sedang dikirim ke semua user!");
     } catch (e) {
@@ -767,88 +765,101 @@ window.saveAutoNotifConfig = async function() {
             auto_notif_content: content
         });
         
-        if(window.showSuccessModal) window.showSuccessModal("Tersimpan", "Template notifikasi harian udah disimpen ke database. Ntar Vercel Cron bakal narik data ini tiap jam 8 malem.");
+        if(window.showSuccessModal) window.showSuccessModal("Tersimpan", "Template notifikasi harian udah disimpen ke database. Pesan ini yang dipakai pengingat otomatis tiap jam 20:00.");
     } catch (e) {
         console.error(e);
         alert("Gagal nyimpen data.");
     }
 }
 
-// 2. Blast Push Notif Manual Sekarang Juga
-window.sendManualPushNotif = async function() {
-    const title = document.getElementById('adminManualNotifTitle').value.trim();
-    const body = document.getElementById('adminManualNotifContent').value.trim();
+// Pengirim notifikasi push FinoCatat (server Lovable).
+// Identitas admin dikirim lewat token login Firebase, bukan kata sandi di kode.
+window.finoSendPush = async function (payload) {
+    const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+    const user = getAuth().currentUser;
+    if (!user) throw new Error("Sesi habis. Masuk ulang sebagai admin.");
+    const idToken = await user.getIdToken();
+
+    const res = await fetch('/api/public/broadcast', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + idToken
+        },
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || ('Server menolak permintaan (' + res.status + ')'));
+    return data;
+};
+
+// 2. Kirim notifikasi ke semua perangkat user
+window.sendManualPushNotif = async function () {
+    const titleEl = document.getElementById('adminManualNotifTitle');
+    const bodyEl = document.getElementById('adminManualNotifContent');
     const btn = document.getElementById('btnSendManualPush');
+    const title = titleEl.value.trim();
+    const body = bodyEl.value.trim();
 
-    if (!title || !body) return alert("Isi dulu judul sama pesannya anjir!");
-    if (!confirm("Woi lu yakin mau nge-blast notif ini ke SEMUA USER sekarang juga?")) return;
+    if (!title || !body) {
+        return window.showWarnModal
+            ? window.showWarnModal("Belum lengkap", "Judul dan isi notifikasi wajib diisi.")
+            : alert("Judul dan isi notifikasi wajib diisi.");
+    }
+    if (!confirm("Kirim notifikasi ini ke semua perangkat user sekarang?")) return;
 
+    const originalHtml = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Ngirim...`;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengirim...';
 
     try {
-        const res = await fetch('/api/broadcast', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                mode: 'manual',
-                title: title,
-                body: body,
-                secretPin: "SYARIEF_GANTENG_123"
-            })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            document.getElementById('adminManualNotifTitle').value = "";
-            document.getElementById('adminManualNotifContent').value = "";
-            if(window.showSuccessModal) window.showSuccessModal("Blast Sukses!", `Push Notif udah berhasil ditembak ke ${data.sentCount} device user.`);
-        } else {
-            alert("Error dari server: " + data.error);
-        }
+        const data = await window.finoSendPush({ mode: 'manual', title: title, body: body });
+        titleEl.value = "";
+        bodyEl.value = "";
+        const ringkas = `Terkirim ke ${data.sent} perangkat dari ${data.total}.` +
+            (data.failed ? ` Gagal ${data.failed}` + (data.removed ? `, ${data.removed} perangkat tidak aktif dibersihkan.` : '.') : '');
+        if (window.showSuccessModal) window.showSuccessModal("Notifikasi terkirim", ringkas);
+        else alert(ringkas);
     } catch (e) {
-        alert("Gagal konek ke API Vercel.");
+        console.error(e);
+        if (window.showWarnModal) window.showWarnModal("Gagal mengirim", e.message);
+        else alert(e.message);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-bomb mr-1"></i> Blast ke Semua User`;
+        btn.innerHTML = originalHtml;
     }
-}
+};
 
-// 3. Test Push Notif ke Target 1 User Doang
-window.sendTestPushNotif = async function() {
+// 3. Uji kirim ke satu user
+window.sendTestPushNotif = async function () {
     const targetUser = document.getElementById('adminTargetUsername').value.trim().toLowerCase();
     const title = document.getElementById('adminTargetNotifTitle').value.trim();
     const body = document.getElementById('adminTargetNotifContent').value.trim();
     const btn = document.getElementById('btnSendTestPush');
 
-    if (!targetUser || !title || !body) return alert("Lengkapin dulu semua kolom test-nya!");
+    if (!targetUser || !title || !body) {
+        return window.showWarnModal
+            ? window.showWarnModal("Belum lengkap", "Username tujuan, judul, dan isi pesan wajib diisi.")
+            : alert("Lengkapi dulu semua kolomnya.");
+    }
 
+    const originalHtml = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mencari target...`;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengirim...';
 
     try {
-        const res = await fetch('/api/broadcast', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                mode: 'test',
-                targetUsername: targetUser,
-                title: title,
-                body: body,
-                secretPin: "SYARIEF_GANTENG_123"
-            })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            if(window.showSuccessModal) window.showSuccessModal("Test Masuk!", `Notif udah dikirim langsung ke HP si @${targetUser}.`);
-        } else {
-            if(window.showWarnModal) window.showWarnModal("Gagal", data.error || data.message);
-        }
+        const data = await window.finoSendPush({ mode: 'test', targetUsername: targetUser, title: title, body: body });
+        const pesan = data.sent
+            ? `Notifikasi terkirim ke perangkat ${targetUser}.`
+            : `Perangkat ${targetUser} tidak menerima notifikasi (token tidak aktif lagi).`;
+        if (window.showSuccessModal) window.showSuccessModal(data.sent ? "Terkirim" : "Tidak terkirim", pesan);
+        else alert(pesan);
     } catch (e) {
-        alert("Gagal konek ke API Vercel.");
+        console.error(e);
+        if (window.showWarnModal) window.showWarnModal("Gagal mengirim", e.message);
+        else alert(e.message);
     } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-vial-circle-check mr-1"></i> Test Kirim ke Target`;
+        btn.innerHTML = originalHtml;
     }
-}
+};
