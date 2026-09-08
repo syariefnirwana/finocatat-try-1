@@ -30,3 +30,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Kunci rahasia (jangan pernah di-commit)
+.env
+.env.*
+!.env.example

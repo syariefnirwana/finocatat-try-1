@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Pencatatan Keuangan</title>
+    <meta name="description" content="FinoCatat adalah aplikasi gratis untuk mencatat dan memantau arus kas keuangan Anda dengan mudah, aman, dan tanpa ribet.">
+  <meta name="keywords" content="fino catat, finocatat, catat keuangan, aplikasi keuangan, dompet digital, aplikasi pengeluaran">
+  <meta name="author" content="FinoCatat Team">
+  <meta property="og:title" content="FinoCatat - Aplikasi Pencatatan Keuangan">
+  <meta property="og:description" content="Pantau arus kas lu dengan FinoCatat. Aman, cepat, dan gampang dipake.">
+  <!-- <meta property="og:url" content="https://fino-catat.vercel.app/"> -->
+    <!-- Kalo lu punya logo, taruh link logonya di sini -->
+    <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <script>
+      if (
+        localStorage.getItem("theme") === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Animasi Latar Belakang Dinamis */
+      @keyframes gradient-xy {
+        0%,
+        100% {
+          background-size: 400% 400%;
+          background-position: left center;
+        }
+        50% {
+          background-size: 200% 200%;
+          background-position: right center;
+        }
+      }
+      .animate-gradient-xy {
+        animation: gradient-xy 15s ease infinite;
+      }
+
+      /* Animasi Pembuka Spring Up */
+      @keyframes spring-up {
+        0% {
+          opacity: 0;
+          transform: scale(0.8) translateY(50px);
+        }
+        70% {
+          transform: scale(1.05) translateY(-10px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .animate-spring-up {
+        animation: spring-up 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+          forwards;
+      }
+
+      /* Animasi Switch Mode Card */
+      @keyframes zoomSpinOut {
+        0% {
+          transform: scale(1) rotate(0deg) translateY(0);
+          opacity: 1;
+        }
+        40% {
+          transform: scale(1.05) rotate(-2deg) translateY(-20px);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(0.5) rotate(15deg) translateY(150px);
+          opacity: 0;
+          filter: blur(5px);
+        }
+      }
+      @keyframes zoomSpinIn {
+        0% {
+          transform: scale(0.5) rotate(-15deg) translateY(-150px);
+          opacity: 0;
+          filter: blur(5px);
+        }
+        60% {
+          transform: scale(1.05) rotate(2deg) translateY(20px);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(1) rotate(0deg) translateY(0);
+          opacity: 1;
+          filter: blur(0);
+        }
+      }
+      .animate-zoom-out {
+        animation: zoomSpinOut 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)
+          forwards;
+      }
+      .animate-zoom-in {
+        animation: zoomSpinIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)
+          forwards;
+      }
+
+      /* Animasi Jitter Shake pas Error */
+      @keyframes subtle-jitter {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20%,
+        60% {
+          transform: translateX(-6px);
+        }
+        40%,
+        80% {
+          transform: translateX(6px);
+        }
+      }
+      .animate-jitter {
+        animation: subtle-jitter 0.4s ease-in-out;
+      }
+
+      /* Tata Letak Toast Apple iOS vs Windows */
+      .toast-default {
+        position: fixed;
+        top: -120px;
+        left: 50%;
+        transform: translateX(-50%);
+        transition:
+          top 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+          opacity 0.4s ease;
+      }
+      .toast-default.show {
+        top: 24px;
+        opacity: 1;
+      }
+      .toast-windows {
+        position: fixed;
+        bottom: -120px;
+        right: 24px;
+        transition:
+          bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+          opacity 0.4s ease;
+      }
+      .toast-windows.show {
+        bottom: 24px;
+        opacity: 1;
+      }
+    </style>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#a1c4fd] via-[#c2e9fb] to-[#e0c3fc] animate-gradient-xy p-4"
+  >
+    <button
+      id="devResetBtn"
+      class="hidden fixed bottom-6 left-6 backdrop-blur-md bg-black/40 hover:bg-black/60 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md z-[9999] border border-white/10"
+    >
+      <i class="fa-solid fa-screwdriver-wrench mr-1.5"></i> Reset Cooldown (Dev)
+    </button>
+
+    <div
+      id="appleToast"
+      class="backdrop-blur-xl shadow-[0_10px_30px_0_rgba(0,0,0,0.15)] px-6 py-4 rounded-3xl flex items-center gap-4 min-w-[320px] max-w-[90%] opacity-0 z-[9999]"
+    >
+      <div
+        id="toastIconBg"
+        class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-md"
+      >
+        <i id="toastIcon" class="fa-solid text-lg"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-800 text-sm" id="toastGreeting">
+          Status
+        </h4>
+        <p class="text-xs text-gray-600 mt-0.5" id="toastMessage">
+          Keterangan proses sistem.
+        </p>
+      </div>
+    </div>
+
+    <div class="w-full max-w-md animate-spring-up" id="cardContainer">
+      <div
+        id="glassCard"
+        class="backdrop-blur-xl bg-white/30 border border-white/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.2)] rounded-3xl p-8 relative overflow-hidden"
+      >
+        <div class="text-center mb-8">
+          <h1
+            id="titleText"
+            class="text-3xl font-bold text-gray-800 tracking-tight transition-all"
+          >
+            Selamat Datang Kembali
+          </h1>
+          <p
+            id="subtitleText"
+            class="text-gray-600 mt-2 text-sm transition-all"
+          >
+            Catat dan pantau keuangan Anda dengan mudah dan aman.
+          </p>
+        </div>
+
+        <form id="authForm" class="flex flex-col gap-4 relative">
+          <div
+            id="usernameContainer"
+            class="hidden transition-all duration-300"
+          >
+            <label class="text-sm font-medium text-gray-700 ml-1"
+              >Username</label
+            >
+            <input
+              type="text"
+              id="usernameInput"
+              class="w-full mt-1 px-4 py-3 rounded-xl bg-white/50 border border-white/40 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/70 transition-all duration-300"
+              placeholder="Contoh: ryan123 (tanpa spasi/simbol)"
+            />
+          </div>
+
+          <div class="relative">
+            <label
+              id="emailLabel"
+              class="text-sm font-medium text-gray-700 ml-1"
+              >Email atau Username</label
+            >
+            <input
+              type="text"
+              id="emailInput"
+              required
+              autocomplete="off"
+              class="w-full mt-1 px-4 py-3 rounded-xl bg-white/50 border border-white/40 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/70 transition-all duration-300"
+              placeholder="Masukkan email atau username Anda"
+            />
+            <div
+              id="historyDropdown"
+              class="hidden absolute left-0 right-0 mt-1 backdrop-blur-xl bg-white/80 border border-white/60 shadow-xl rounded-2xl overflow-hidden z-50 flex flex-col transition-all duration-200"
+            ></div>
+          </div>
+
+          <div class="relative">
+            <div class="flex justify-between items-center px-1">
+              <label class="text-sm font-medium text-gray-700"
+                >Kata Sandi</label
+              >
+              <div class="flex gap-3">
+                <button
+                  type="button"
+                  id="suggestPasswordBtn"
+                  class="text-xs font-bold text-blue-700 hover:underline hidden"
+                >
+                  Gunakan kata sandi acak
+                </button>
+                <button
+                  type="button"
+                  id="forgotPasswordBtn"
+                  class="text-xs font-bold text-blue-700 hover:underline transition-colors"
+                >
+                  Lupa Sandi?
+                </button>
+              </div>
+            </div>
+            <input
+              type="password"
+              id="passwordInput"
+              required
+              class="w-full mt-1 px-4 py-3 rounded-xl bg-white/50 border border-white/40 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/70 transition-all duration-300 pr-12"
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              id="togglePassword"
+              class="absolute right-4 top-[38px] text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <i class="fa-solid fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+
+          <div
+            id="passwordRequirements"
+            class="hidden flex flex-col gap-1 mt-1 px-1"
+          >
+            <p class="text-xs font-medium text-gray-700 mb-0.5">
+              Persyaratan kata sandi:
+            </p>
+            <div
+              class="flex items-center gap-2 text-xs text-red-500 transition-colors"
+              id="reqLength"
+            >
+              <i class="fa-solid fa-circle text-[6px]"></i> 8 - 16 Karakter
+            </div>
+            <div
+              class="flex items-center gap-2 text-xs text-red-500 transition-colors"
+              id="reqUpper"
+            >
+              <i class="fa-solid fa-circle text-[6px]"></i> Minimal 1 huruf
+              besar
+            </div>
+            <div
+              class="flex items-center gap-2 text-xs text-red-500 transition-colors"
+              id="reqLower"
+            >
+              <i class="fa-solid fa-circle text-[6px]"></i> Minimal 1 huruf
+              kecil
+            </div>
+            <div
+              class="flex items-center gap-2 text-xs text-red-500 transition-colors"
+              id="reqSymbol"
+            >
+              <i class="fa-solid fa-circle text-[6px]"></i> Minimal 1 simbol /
+              karakter khusus
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="mt-4 w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-95"
+          >
+            Masuk
+          </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-gray-700">
+          <span id="toggleDesc">Belum memiliki akun? </span>
+          <button
+            type="button"
+            id="toggleModeBtn"
+            class="font-bold text-blue-700 hover:underline transition-all"
+          >
+            Daftar sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut,
+        sendPasswordResetEmail,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDRFdFw1LTjydGLG8cN7PGaLJoIs-i9o0I",
+        authDomain: "catat-keuangan-web.firebaseapp.com",
+        projectId: "catat-keuangan-web",
+        storageBucket: "catat-keuangan-web.firebasestorage.app",
+        messagingSenderId: "697960795997",
+        appId: "1:697960795997:web:ac6918a4d118a2c12022b4",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      let isLogin = true;
+      let isRegistering = false;
+
+      // DOM Elements Mapping
+      const authForm = document.getElementById("authForm");
+      const usernameContainer = document.getElementById("usernameContainer");
+      const usernameInput = document.getElementById("usernameInput");
+      const emailLabel = document.getElementById("emailLabel");
+      const emailInput = document.getElementById("emailInput");
+      const passwordInput = document.getElementById("passwordInput");
+      const togglePasswordBtn = document.getElementById("togglePassword");
+      const eyeIcon = document.getElementById("eyeIcon");
+      const toggleModeBtn = document.getElementById("toggleModeBtn");
+      const titleText = document.getElementById("titleText");
+      const subtitleText = document.getElementById("subtitleText");
+      const submitBtn = document.getElementById("submitBtn");
+      const toggleDesc = document.getElementById("toggleDesc");
+      const glassCard = document.getElementById("glassCard");
+      const cardContainer = document.getElementById("cardContainer");
+      const suggestPasswordBtn = document.getElementById("suggestPasswordBtn");
+      const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+      const passwordRequirements = document.getElementById(
+        "passwordRequirements",
+      );
+      const appleToast = document.getElementById("appleToast");
+      const toastIconBg = document.getElementById("toastIconBg");
+      const toastIcon = document.getElementById("toastIcon");
+      const toastGreeting = document.getElementById("toastGreeting");
+      const toastMessage = document.getElementById("toastMessage");
+      const reqLength = document.getElementById("reqLength");
+      const reqUpper = document.getElementById("reqUpper");
+      const reqLower = document.getElementById("reqLower");
+      const reqSymbol = document.getElementById("reqSymbol");
+      const historyDropdown = document.getElementById("historyDropdown");
+      const devResetBtn = document.getElementById("devResetBtn");
+
+      // Monitor Status Otentikasi Sesi User
+      onAuthStateChanged(auth, (user) => {
+        if (user && !isRegistering) {
+          window.location.href = "/dashboard.html";
+        }
+      });
+
+      // Pengaturan Layout Pop-up Toast Berdasarkan User Agent OS
+      const isWindows = navigator.userAgent.indexOf("Windows") !== -1;
+      if (isWindows) appleToast.classList.add("toast-windows");
+      else appleToast.classList.add("toast-default");
+
+      function showNotification(isSuccess, title, message) {
+        if (isSuccess) {
+          toastIconBg.className =
+            "w-10 h-10 rounded-2xl flex items-center justify-center shadow-md bg-blue-600 text-white shadow-blue-500/20";
+          toastIcon.className = "fa-solid fa-circle-check text-lg";
+        } else {
+          toastIconBg.className =
+            "w-10 h-10 rounded-2xl flex items-center justify-center shadow-md bg-red-600 text-white shadow-red-500/20";
+          toastIcon.className = "fa-solid fa-circle-xmark text-lg";
+        }
+        toastGreeting.textContent = title;
+        toastMessage.textContent = message;
+        appleToast.classList.add("show");
+      }
+
+      function hideNotification() {
+        appleToast.classList.remove("show");
+      }
+
+      function triggerProcessFailure(title, message, rawError = null) {
+        if (rawError) {
+          console.log("== [DEVELOPER INFO ERROR] ==");
+          console.error(rawError);
+        }
+        try {
+          const audioCtx = new (
+            window.AudioContext || window.webkitAudioContext
+          )();
+          const oscillator = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          oscillator.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          oscillator.type = "sine";
+          oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+          gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          oscillator.start();
+          oscillator.stop(audioCtx.currentTime + 0.25);
+        } catch (e) {
+          console.log("Web Audio API diblokir oleh sistem browser.");
+        }
+
+        glassCard.classList.add("animate-jitter");
+        setTimeout(() => glassCard.classList.remove("animate-jitter"), 400);
+        showNotification(false, title, message);
+        setTimeout(hideNotification, 4000);
+      }
+
+      // Cooldown Management Logic
+      function checkCooldownState() {
+        const cooldownUntil = localStorage.getItem("cooldown_until");
+        if (cooldownUntil && Date.now() < parseInt(cooldownUntil)) {
+          const timeLeft = parseInt(cooldownUntil) - Date.now();
+          const minutes = Math.floor(timeLeft / 60000);
+          const seconds = Math.floor((timeLeft % 60000) / 1000);
+          const formattedTime = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+          triggerProcessFailure(
+            "Akses Ditangguhkan",
+            `Terlalu banyak percobaan gagal. Silakan tunggu selama ${formattedTime}.`,
+          );
+          return true;
+        }
+        return false;
+      }
+
+      function handleFailedAttempt() {
+        let attempts = parseInt(localStorage.getItem("failed_attempts") || "0");
+        attempts += 1;
+        localStorage.setItem("failed_attempts", attempts.toString());
+        if (attempts >= 30) {
+          const blockTimestamp = Date.now() + 5 * 60 * 1000;
+          localStorage.setItem("cooldown_until", blockTimestamp.toString());
+          triggerProcessFailure(
+            "Sistem Terkunci",
+            "Anda telah gagal sebanyak 30 kali. Sistem ditangguhkan selama 05:00.",
+          );
+        }
+      }
+
+      function clearFailedAttemptsOnSuccess() {
+        localStorage.removeItem("failed_attempts");
+        localStorage.removeItem("cooldown_until");
+      }
+
+      devResetBtn.addEventListener("click", () => {
+        clearFailedAttemptsOnSuccess();
+        alert(
+          "Sistem pengembangan: Seluruh status batasan cooldown berhasil di-reset!",
+        );
+      });
+
+      // History Dropdown Account Management
+      function saveToHistory(identifier) {
+        if (!identifier) return;
+        let history = JSON.parse(localStorage.getItem("auth_history") || "[]");
+        history = history.filter(
+          (item) => item.toLowerCase() !== identifier.toLowerCase(),
+        );
+        history.unshift(identifier);
+        if (history.length > 3) history = history.slice(0, 3);
+        localStorage.setItem("auth_history", JSON.stringify(history));
+      }
+
+      function renderHistoryDropdown() {
+        const history = JSON.parse(
+          localStorage.getItem("auth_history") || "[]",
+        );
+        if (history.length === 0 || !isLogin) {
+          historyDropdown.classList.add("hidden");
+          return;
+        }
+        historyDropdown.innerHTML = `<div class="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-wider bg-gray-100/50">Akun Terakhir</div>`;
+        history.forEach((item) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className =
+            "w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 font-medium transition-colors border-t border-gray-100 flex items-center gap-2.5";
+          btn.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-gray-400 text-xs"></i> <span>${item}</span>`;
+          btn.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            emailInput.value = item;
+            historyDropdown.classList.add("hidden");
+          });
+          historyDropdown.appendChild(btn);
+        });
+      }
+
+      emailInput.addEventListener("focus", renderHistoryDropdown);
+      emailInput.addEventListener("blur", () => {
+        setTimeout(() => historyDropdown.classList.add("hidden"), 150);
+      });
+
+      function checkPasswordRequirements(value) {
+        const rules = {
+          length: value.length >= 8 && value.length <= 16,
+          upper: /[A-Z]/.test(value),
+          lower: /[a-z]/.test(value),
+          symbol: /[^A-Za-z0-9]/.test(value),
+        };
+        const toggleClass = (element, condition) => {
+          if (condition) {
+            element.classList.remove("text-red-500");
+            element.classList.add("text-green-600");
+          } else {
+            element.classList.remove("text-green-600");
+            element.classList.add("text-red-500");
+          }
+        };
+        toggleClass(reqLength, rules.length);
+        toggleClass(reqUpper, rules.upper);
+        toggleClass(reqLower, rules.lower);
+        toggleClass(reqSymbol, rules.symbol);
+        return rules.length && rules.upper && rules.lower && rules.symbol;
+      }
+
+      passwordInput.addEventListener("input", (e) => {
+        if (!isLogin) checkPasswordRequirements(e.target.value);
+      });
+
+      suggestPasswordBtn.addEventListener("click", () => {
+        const securePass = generateSecurePassword();
+        passwordInput.type = "text";
+        eyeIcon.className = "fa-solid fa-eye-slash";
+        passwordInput.value = securePass;
+        checkPasswordRequirements(securePass);
+      });
+
+      togglePasswordBtn.addEventListener("click", () => {
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          eyeIcon.className = "fa-solid fa-eye-slash";
+        } else {
+          passwordInput.type = "password";
+          eyeIcon.className = "fa-solid fa-eye";
+        }
+      });
+
+      function switchFormMode(targetToLogin) {
+        if (glassCard.classList.contains("animate-zoom-out")) return;
+        hideNotification();
+        historyDropdown.classList.add("hidden");
+        cardContainer.classList.remove("animate-spring-up");
+        glassCard.classList.remove("animate-zoom-in");
+        glassCard.classList.add("animate-zoom-out");
+
+        setTimeout(() => {
+          isLogin = targetToLogin;
+
+          // REVISI FIX: Garansi tombol submit wajib aktif kembali setiap berganti wujud form mode
+          submitBtn.disabled = false;
+
+          if (isLogin) {
+            titleText.textContent = "Selamat Datang Kembali";
+            subtitleText.textContent =
+              "Catat dan pantau keuangan Anda dengan mudah dan aman.";
+            submitBtn.textContent = "Masuk";
+            toggleDesc.textContent = "Belum memiliki akun? ";
+            toggleModeBtn.textContent = "Daftar sekarang";
+            emailLabel.textContent = "Email atau Username";
+            emailInput.placeholder = "Masukkan email atau username Anda";
+            usernameContainer.classList.add("hidden");
+            usernameInput.removeAttribute("required");
+            suggestPasswordBtn.classList.add("hidden");
+            passwordRequirements.classList.add("hidden");
+            if (forgotPasswordBtn) forgotPasswordBtn.classList.remove("hidden"); // Munculin pas login
+          } else {
+            titleText.textContent = "Daftar Akun Baru";
+            subtitleText.textContent =
+              "Mulai kelola keuangan Anda dengan lebih terencana hari ini.";
+            submitBtn.textContent = "Daftar";
+            toggleDesc.textContent = "Sudah memiliki akun? ";
+            toggleModeBtn.textContent = "Masuk sekarang";
+            emailLabel.textContent = "Email";
+            emailInput.placeholder = "nama@email.com";
+            usernameContainer.classList.remove("hidden");
+            usernameInput.setAttribute("required", "true");
+            suggestPasswordBtn.classList.remove("hidden");
+            passwordRequirements.classList.remove("hidden");
+            if (forgotPasswordBtn) forgotPasswordBtn.classList.add("hidden"); // Sembunyiin pas register
+          }
+          emailInput.value = "";
+          passwordInput.value = "";
+          usernameInput.value = "";
+          passwordInput.type = "password";
+          eyeIcon.className = "fa-solid fa-eye";
+          checkPasswordRequirements("");
+          glassCard.classList.remove("animate-zoom-out");
+          glassCard.classList.add("animate-zoom-in");
+        }, 600);
+      }
+
+      toggleModeBtn.addEventListener("click", () => switchFormMode(!isLogin));
+
+      // Submit Handler Form
+      authForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        hideNotification();
+        if (checkCooldownState()) return;
+
+        const password = passwordInput.value;
+        const identifier = emailInput.value.trim();
+
+        if (!isLogin || identifier.includes("@")) {
+          if (!identifier.toLowerCase().endsWith("@gmail.com")) {
+            triggerProcessFailure(
+              "Validasi Gagal",
+              "Format alamat email harus diakhiri dengan @gmail.com.",
+            );
+            return;
+          }
+        }
+
+        submitBtn.textContent = "Memproses...";
+        submitBtn.disabled = true;
+
+        // JALUR REGISTER
+        if (!isLogin) {
+          const username = usernameInput.value.trim();
+          if (!/^[a-zA-Z0-9]+$/.test(username)) {
+            triggerProcessFailure(
+              "Pendaftaran Gagal",
+              "Username hanya boleh berisi huruf dan angka tanpa simbol atau spasi.",
+            );
+            submitBtn.textContent = "Daftar";
+            submitBtn.disabled = false;
+            return;
+          }
+          if (!checkPasswordRequirements(password)) {
+            triggerProcessFailure(
+              "Pendaftaran Gagal",
+              "Kata sandi belum memenuhi semua persyaratan keamanan.",
+            );
+            submitBtn.textContent = "Daftar";
+            submitBtn.disabled = false;
+            return;
+          }
+
+          isRegistering = true;
+
+          try {
+            const usernameKey = username.toLowerCase();
+            const usernameDocRef = doc(db, "usernames", usernameKey);
+            const usernameSnapshot = await getDoc(usernameDocRef);
+
+            if (usernameSnapshot.exists()) {
+              triggerProcessFailure(
+                "Pendaftaran Gagal",
+                "Username sudah digunakan oleh pengguna lain.",
+              );
+              isRegistering = false;
+              submitBtn.textContent = "Daftar";
+              submitBtn.disabled = false;
+              return;
+            }
+
+            const userCredential = await createUserWithEmailAndPassword(
+              auth,
+              identifier,
+              password,
+            );
+            await setDoc(usernameDocRef, {
+              email: identifier.toLowerCase(),
+              uid: userCredential.user.uid,
+              rawUsername: username,
+            });
+
+            await signOut(auth);
+
+            clearFailedAttemptsOnSuccess();
+            showNotification(
+              true,
+              "Pendaftaran Berhasil",
+              "Akun terdaftar! Silakan login untuk masuk.",
+            );
+            setTimeout(() => {
+              hideNotification();
+              isRegistering = false;
+              switchFormMode(true);
+            }, 2500);
+          } catch (error) {
+            isRegistering = false;
+            handleFailedAttempt();
+            let errorMessage = "Terjadi kesalahan internal data.";
+            if (error.code === "auth/email-already-in-use")
+              errorMessage =
+                "Alamat email tersebut sudah digunakan oleh akun lain.";
+            triggerProcessFailure("Pendaftaran Gagal", errorMessage, error);
+          } finally {
+            if (!isRegistering) {
+              submitBtn.textContent = "Daftar";
+              submitBtn.disabled = false;
+            }
+          }
+
+          // JALUR LOGIN
+        } else {
+          let finalEmailTarget = identifier;
+
+          try {
+            if (!identifier.includes("@")) {
+              const usernameKey = identifier.toLowerCase();
+              const usernameDocRef = doc(db, "usernames", usernameKey);
+              const usernameSnapshot = await getDoc(usernameDocRef);
+
+              if (!usernameSnapshot.exists()) {
+                triggerProcessFailure(
+                  "Masuk Gagal",
+                  "Username atau alamat email tidak terdaftar.",
+                );
+                handleFailedAttempt();
+                submitBtn.textContent = "Masuk";
+                submitBtn.disabled = false;
+                return;
+              }
+              finalEmailTarget = usernameSnapshot.data().email;
+            }
+
+            await signInWithEmailAndPassword(auth, finalEmailTarget, password);
+
+            saveToHistory(identifier);
+            clearFailedAttemptsOnSuccess();
+            showNotification(
+              true,
+              getAppleGreeting(),
+              "Transaksi dan catatan Anda telah siap.",
+            );
+          } catch (error) {
+            handleFailedAttempt();
+            triggerProcessFailure(
+              "Masuk Gagal",
+              "Kredensial atau kata sandi yang Anda masukkan salah.",
+              error,
+            );
+          } finally {
+            submitBtn.textContent = "Masuk";
+            submitBtn.disabled = false;
+          }
+        }
+      });
+
+      // Mesin Pengirim Email Lupa Sandi
+      if (forgotPasswordBtn) {
+        forgotPasswordBtn.addEventListener("click", async () => {
+          const identifier = emailInput.value.trim();
+          if (!identifier) {
+            triggerProcessFailure(
+              "Input Kosong",
+              "Masukkan email atau username Anda terlebih dahulu di kolom atas untuk mereset kata sandi.",
+            );
+            emailInput.focus();
+            return;
+          }
+
+          forgotPasswordBtn.textContent = "Mencari...";
+          forgotPasswordBtn.disabled = true;
+          let finalEmailTarget = identifier;
+
+          try {
+            // Kalo user ngetik username (tanpa @), cari dulu emailnya di database
+            if (!identifier.includes("@")) {
+              const usernameKey = identifier.toLowerCase();
+              const usernameDocRef = doc(db, "usernames", usernameKey);
+              const usernameSnapshot = await getDoc(usernameDocRef);
+
+              if (!usernameSnapshot.exists()) {
+                triggerProcessFailure(
+                  "Gagal",
+                  "Username tidak ditemukan di sistem.",
+                );
+                return;
+              }
+              finalEmailTarget = usernameSnapshot.data().email;
+            }
+
+            // Tembak email reset dari Firebase
+            await sendPasswordResetEmail(auth, finalEmailTarget);
+            showNotification(
+              true,
+              "Email Terkirim!",
+              `Tautan untuk mereset kata sandi telah dikirim ke ${finalEmailTarget}. Periksa kotak masuk atau folder spam Anda.`,
+            );
+          } catch (error) {
+            triggerProcessFailure(
+              "Gagal",
+              "Terjadi kesalahan saat mengirim tautan reset sandi.",
+              error,
+            );
+          } finally {
+            forgotPasswordBtn.textContent = "Lupa Sandi?";
+            forgotPasswordBtn.disabled = false;
+          }
+        });
+      }
+
+      function generateSecurePassword() {
+        const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lower = "abcdefghijklmnopqrstuvwxyz";
+        const numbers = "0123456789";
+        const symbols = "!@#$%^&*()";
+        let pass =
+          upper[Math.floor(Math.random() * 26)] +
+          lower[Math.floor(Math.random() * 26)] +
+          numbers[Math.floor(Math.random() * 10)] +
+          symbols[Math.floor(Math.random() * 10)];
+        const total = upper + lower + numbers + symbols;
+        for (let i = 0; i < 8; i++)
+          pass += total[Math.floor(Math.random() * total.length)];
+        return pass
+          .split("")
+          .sort(() => 0.5 - Math.random())
+          .join("");
+      }
+    </script>
+      <link rel="stylesheet" href="/auth/css/fino-auth.css?v=1" />
+  </body>
+</html>
