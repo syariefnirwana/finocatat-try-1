@@ -416,3 +416,11 @@ main section > div:has(> .grid) {
 #dompetSliderContainer .animate-pulse {
   background: var(--fino-surface-2) !important;
 }
+
+/* pembungkus berbentuk kolom juga tanpa garis ganda */
+main section > div.flex {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
